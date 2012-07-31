@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+    <!--
+        Copyright (c) 2012, Florian Boesch <pyalot@gmail.com> http://codeflow.org/
+
+        WebGL Extensioneer is licensed under any of the following licenses at your choosing:
+
+        MIT: see mit-license
+        GPL: see gpl-license
+        BDS: see bsd-license
+    -->
+    <head>
+        <title>Extensioneer Test</title>
+        <script src="webgl-extensioneer.js"></script>
+        <script type="text/javascript">
+            (function(){
+                var canvas, ctx, table;
+                var log = function(name, ok){
+                    var row = document.createElement('tr');
+                    table.appendChild(row);
+                    var cell = document.createElement('td');
+                    row.appendChild(cell);
+                    cell.innerText = name;
+                    
+                    var cell = document.createElement('td');
+                    row.appendChild(cell);
+                    if(ok){
+                        cell.innerText = 'OK';
+                    }
+                    else{
+                        cell.innerText = 'FAILED';
+                        row.setAttribute('class', 'failed');
+                    }
+                    
+                }
+                var test = function(comment, extname, outcome, spec){
+                    var ext = ctx.getExtension(extname, spec) != undefined;
+                    var supported = ctx.getSupportedExtensions();
+                    var is_supported = false;
+                    for(var i=0; i<supported.length; i++){
+                        var item = supported[i];
+                        if(item.indexOf(extname) >= 0){
+                            is_supported = true;
+                            break;
+                        }
+                    }
+                    if(is_supported){
+                        log(comment + ': ' + extname, ext == outcome);
+                    }
+                    else{
+                        log(comment + ': ' + extname, ext == false);
+                    }
+                }
+
+                var testNoSpec = function(){
+                    var comment = 'No spec';
+                    test(comment, 'OES_texture_float', true);
+                    test(comment, 'OES_texture_half_float', true);
+                    test(comment, 'OES_standard_derivatives', true);
+                    test(comment, 'WEBGL_renderer_info', true);
+                    test(comment, 'WEBGL_debug_shaders', true);
+                    test(comment, 'EXT_texture_filter_anisotropic', true);
+                    
+                    test(comment, 'WEBGL_lose_context', false);
+                    test(comment, 'OES_vertex_array_object', false);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', false);
+                    test(comment, 'WEBGL_depth_texture', false);
+                    test(comment, 'OES_element_index_uint', false);
+                }
+                
+                var testWithDraft = function(){
+                    var spec = {draft: true};
+                    var comment = 'No spec';
+                    test(comment, 'OES_texture_float', true, spec);
+                    test(comment, 'OES_texture_half_float', false, spec);
+                    test(comment, 'OES_standard_derivatives', true, spec);
+                    test(comment, 'WEBGL_renderer_info', true, spec);
+                    test(comment, 'WEBGL_debug_shaders', true, spec);
+                    test(comment, 'EXT_texture_filter_anisotropic', true, spec);
+                    
+                    test(comment, 'WEBGL_lose_context', true, spec);
+                    test(comment, 'OES_vertex_array_object', true, spec);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', true, spec);
+                    test(comment, 'WEBGL_depth_texture', true, spec);
+                    test(comment, 'OES_element_index_uint', true, spec);
+                }
+                
+                var testRatifiedOnly = function(){
+                    var spec = {ratified: true, approved: false, draft: false};
+                    var comment = 'Ratified Only';
+                    test(comment, 'OES_texture_float', false, spec);
+                    test(comment, 'OES_texture_half_float', false, spec);
+                    test(comment, 'OES_standard_derivatives', false, spec);
+                    test(comment, 'WEBGL_renderer_info', false, spec);
+                    test(comment, 'WEBGL_debug_shaders', false, spec);
+                    test(comment, 'EXT_texture_filter_anisotropic', false, spec);
+                    
+                    test(comment, 'WEBGL_lose_context', false, spec);
+                    test(comment, 'OES_vertex_array_object', false, spec);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', false, spec);
+                    test(comment, 'WEBGL_depth_texture', false, spec);
+                    test(comment, 'OES_element_index_uint', false, spec);
+                }
+                
+                var testDraftOnly = function(){
+                    var spec = {ratified: false, approved: false, draft: true};
+                    var comment = 'Ratified Only';
+                    test(comment, 'OES_texture_float', false, spec);
+                    test(comment, 'OES_texture_half_float', false, spec);
+                    test(comment, 'OES_standard_derivatives', false, spec);
+                    test(comment, 'WEBGL_renderer_info', false, spec);
+                    test(comment, 'WEBGL_debug_shaders', false, spec);
+                    test(comment, 'EXT_texture_filter_anisotropic', false, spec);
+                    
+                    test(comment, 'WEBGL_lose_context', true, spec);
+                    test(comment, 'OES_vertex_array_object', true, spec);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', true, spec);
+                    test(comment, 'WEBGL_depth_texture', true, spec);
+                    test(comment, 'OES_element_index_uint', true, spec);
+                }
+
+                window.runTest = function(){
+                    canvas = document.getElementsByTagName('canvas')[0];
+                    ctx = canvas.getContext('experimental-webgl') || canvas.getContext('webgl');
+                    table = document.getElementsByTagName('table')[0];
+                    testNoSpec();
+                    testWithDraft();
+                    testRatifiedOnly();
+                    testDraftOnly();
+                }
+            })();
+        </script>
+        <style type="text/css">
+            body{
+                font-family: sans-serif;
+            }
+            canvas{
+                display: none;
+            }
+            table{
+                border-collapse: collapse;
+            }
+            table, tr, td{
+                padding: 0;
+                margin: 0;
+            }
+            td{
+                padding: 2px 5px 2px 5px;
+                border: 1px solid #555;
+            }
+            thead td{
+                font-weight: bold;
+                background-color: #ccc;
+            }
+            tr.failed{
+                background-color: red;
+                color: white;
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <h1>Test Result</h1>
+        <table>
+            <thead><tr>
+                <td>Test Name</td><td>Passed</td>
+            </tr></thead>
+        </table>
+        <canvas></canvas>
+    </body>
+</html>
