@@ -26,27 +26,28 @@ registry =
         'OES_element_index_uint'
     ]
 
-getExtension = WebGLRenderingContext.prototype.getExtension
-WebGLRenderingContext.prototype.getExtension = (name, {ratified, approved, draft}={}) ->
-    ratified ?= true
-    approved ?= true
-    draft ?= false
+if window.WebGLRenderingContext?
+    getExtension = WebGLRenderingContext.prototype.getExtension
+    WebGLRenderingContext.prototype.getExtension = (name, {ratified, approved, draft}={}) ->
+        ratified ?= true
+        approved ?= true
+        draft ?= false
 
-    for supported in @getSupportedExtensions()
-        index = supported.indexOf name
-        if index >= 0 then break
+        for supported in @getSupportedExtensions()
+            index = supported.indexOf name
+            if index >= 0 then break
 
-    if index == -1 then return null
+        if index == -1 then return null
 
-    is_ratified = registry.ratified.indexOf(name) >= 0
-    is_approved = registry.approved.indexOf(name) >= 0
-    is_draft = registry.draft.indexOf(name) >= 0
+        is_ratified = registry.ratified.indexOf(name) >= 0
+        is_approved = registry.approved.indexOf(name) >= 0
+        is_draft = registry.draft.indexOf(name) >= 0
 
-    if is_ratified and ratified
-        return getExtension.call @, supported
-    else if is_approved and approved
-        return getExtension.call @, supported
-    else if is_draft and draft
-        return getExtension.call @, supported
-    else
-        return null
+        if is_ratified and ratified
+            return getExtension.call @, supported
+        else if is_approved and approved
+            return getExtension.call @, supported
+        else if is_draft and draft
+            return getExtension.call @, supported
+        else
+            return null
