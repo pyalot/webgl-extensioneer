@@ -52,14 +52,14 @@
                     }
                 }
 
-                var testNoSpec = function(){
-                    var comment = 'No spec';
+                var testNoReq = function(){
+                    var comment = 'No requirement';
                     test(comment, 'OES_texture_float', true);
                     test(comment, 'OES_texture_half_float', true);
                     test(comment, 'OES_standard_derivatives', true);
                     test(comment, 'WEBGL_renderer_info', true);
                     test(comment, 'WEBGL_debug_shaders', true);
-                    test(comment, 'EXT_texture_filter_anisotropic', true);
+                    test(comment, 'EXT_texture_filter_anisotropic', false);
                     
                     test(comment, 'WEBGL_lose_context', false);
                     test(comment, 'OES_vertex_array_object', false);
@@ -68,9 +68,26 @@
                     test(comment, 'OES_element_index_uint', false);
                 }
                 
-                var testWithDraft = function(){
+                var testRefSpec = function(){
+                    var comment = 'ref: spec';
+                    var req = {ref:'spec'};
+                    test(comment, 'OES_texture_float', true, req);
+                    test(comment, 'OES_texture_half_float', true, req);
+                    test(comment, 'OES_standard_derivatives', true, req);
+                    test(comment, 'WEBGL_renderer_info', true, req);
+                    test(comment, 'WEBGL_debug_shaders', true, req);
+                    test(comment, 'EXT_texture_filter_anisotropic', true, req);
+                    
+                    test(comment, 'WEBGL_lose_context', false, req);
+                    test(comment, 'OES_vertex_array_object', false, req);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', false, req);
+                    test(comment, 'WEBGL_depth_texture', false, req);
+                    test(comment, 'OES_element_index_uint', false, req);
+                }
+                
+                var testWithDraftBrowser = function(){
                     var spec = {draft: true};
-                    var comment = 'No spec';
+                    var comment = 'With draft ref browser';
                     test(comment, 'OES_texture_float', true, spec);
                     test(comment, 'OES_texture_half_float', false, spec);
                     test(comment, 'OES_standard_derivatives', true, spec);
@@ -85,26 +102,43 @@
                     test(comment, 'OES_element_index_uint', true, spec);
                 }
                 
-                var testRatifiedOnly = function(){
-                    var spec = {ratified: true, approved: false, draft: false};
-                    var comment = 'Ratified Only';
+                var testDraftOnlyBrowser = function(){
+                    var spec = {approved: false, draft: true};
+                    var comment = 'Draft Only ref browser';
                     test(comment, 'OES_texture_float', false, spec);
                     test(comment, 'OES_texture_half_float', false, spec);
                     test(comment, 'OES_standard_derivatives', false, spec);
                     test(comment, 'WEBGL_renderer_info', false, spec);
                     test(comment, 'WEBGL_debug_shaders', false, spec);
-                    test(comment, 'EXT_texture_filter_anisotropic', false, spec);
                     
-                    test(comment, 'WEBGL_lose_context', false, spec);
-                    test(comment, 'OES_vertex_array_object', false, spec);
-                    test(comment, 'WEBGL_compressed_texture_s3tc', false, spec);
-                    test(comment, 'WEBGL_depth_texture', false, spec);
-                    test(comment, 'OES_element_index_uint', false, spec);
+                    test(comment, 'EXT_texture_filter_anisotropic', true, spec);
+                    test(comment, 'WEBGL_lose_context', true, spec);
+                    test(comment, 'OES_vertex_array_object', true, spec);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', true, spec);
+                    test(comment, 'WEBGL_depth_texture', true, spec);
+                    test(comment, 'OES_element_index_uint', true, spec);
                 }
                 
-                var testDraftOnly = function(){
-                    var spec = {ratified: false, approved: false, draft: true};
-                    var comment = 'Ratified Only';
+                var testWithDraftSpec = function(){
+                    var spec = {draft: true, ref:'spec'};
+                    var comment = 'With draft ref spec';
+                    test(comment, 'OES_texture_float', true, spec);
+                    test(comment, 'OES_texture_half_float', false, spec);
+                    test(comment, 'OES_standard_derivatives', true, spec);
+                    test(comment, 'WEBGL_renderer_info', true, spec);
+                    test(comment, 'WEBGL_debug_shaders', true, spec);
+                    test(comment, 'EXT_texture_filter_anisotropic', true, spec);
+                    
+                    test(comment, 'WEBGL_lose_context', true, spec);
+                    test(comment, 'OES_vertex_array_object', true, spec);
+                    test(comment, 'WEBGL_compressed_texture_s3tc', true, spec);
+                    test(comment, 'WEBGL_depth_texture', true, spec);
+                    test(comment, 'OES_element_index_uint', true, spec);
+                }
+                
+                var testDraftOnlySpec = function(){
+                    var spec = {approved: false, draft: true, ref:'spec'};
+                    var comment = 'Draft Only ref spec';
                     test(comment, 'OES_texture_float', false, spec);
                     test(comment, 'OES_texture_half_float', false, spec);
                     test(comment, 'OES_standard_derivatives', false, spec);
@@ -123,10 +157,12 @@
                     canvas = document.getElementsByTagName('canvas')[0];
                     ctx = canvas.getContext('experimental-webgl') || canvas.getContext('webgl');
                     table = document.getElementsByTagName('table')[0];
-                    testNoSpec();
-                    testWithDraft();
-                    testRatifiedOnly();
-                    testDraftOnly();
+                    testNoReq();
+                    testRefSpec();
+                    testWithDraftBrowser();
+                    testDraftOnlyBrowser();
+                    testWithDraftSpec();
+                    testDraftOnlySpec();
                 }
             })();
         </script>

@@ -2,48 +2,54 @@
 (function() {
   'Copyright (c) 2012, Florian Boesch <pyalot@gmail.com> http://codeflow.org/\n\nWebGL Extensioneer is licensed under any of the following licenses at your choosing:\n\nMIT: see mit-license\nGPL: see gpl-license\nBSD: see bsd-license';
 
-  var getExtension, registry;
+  var getExtension, spec_approved, vendors;
 
-  registry = {
-    ratified: [],
-    approved: ['OES_texture_float', 'OES_texture_half_float', 'OES_standard_derivatives', 'WEBGL_debug_renderer_info', 'WEBGL_debug_shaders', 'EXT_texture_filter_anisotropic'],
-    draft: ['WEBGL_lose_context', 'OES_vertex_array_object', 'WEBGL_compressed_texture_s3tc', 'WEBGL_depth_texture', 'OES_element_index_uint']
-  };
+  spec_approved = ['OES_texture_float', 'OES_texture_half_float', 'OES_standard_derivatives', 'WEBGL_debug_renderer_info', 'WEBGL_debug_shaders', 'EXT_texture_filter_anisotropic'];
+
+  vendors = ['MOZ_', 'IE_', 'O_', 'WEBKIT_'];
 
   if (window.WebGLRenderingContext != null) {
     getExtension = WebGLRenderingContext.prototype.getExtension;
     WebGLRenderingContext.prototype.getExtension = function(name, _arg) {
-      var approved, draft, index, is_approved, is_draft, is_ratified, ratified, supported, _i, _len, _ref, _ref1;
-      _ref = _arg != null ? _arg : {}, ratified = _ref.ratified, approved = _ref.approved, draft = _ref.draft;
-      if (ratified == null) {
-        ratified = true;
-      }
+      var approved, draft, extname, is_approved, ref, supported, vendor, _i, _j, _len, _len1, _ref, _ref1;
+      _ref = _arg != null ? _arg : {}, approved = _ref.approved, draft = _ref.draft, ref = _ref.ref;
       if (approved == null) {
         approved = true;
       }
       if (draft == null) {
         draft = false;
       }
+      if (ref == null) {
+        ref = 'browser';
+      }
+      supported = false;
       _ref1 = this.getSupportedExtensions();
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        supported = _ref1[_i];
-        index = supported.indexOf(name);
-        if (index >= 0) {
+        extname = _ref1[_i];
+        if (extname.indexOf(name) >= 0) {
+          supported = true;
           break;
         }
       }
-      if (index === -1) {
+      if (supported === false) {
         return null;
       }
-      is_ratified = registry.ratified.indexOf(name) >= 0;
-      is_approved = registry.approved.indexOf(name) >= 0;
-      is_draft = registry.draft.indexOf(name) >= 0;
-      if (is_ratified && ratified) {
-        return getExtension.call(this, supported);
-      } else if (is_approved && approved) {
-        return getExtension.call(this, supported);
-      } else if (is_draft && draft) {
-        return getExtension.call(this, supported);
+      if (ref === 'browser') {
+        is_approved = true;
+        for (_j = 0, _len1 = vendors.length; _j < _len1; _j++) {
+          vendor = vendors[_j];
+          if (extname.indexOf(vendor) === 0) {
+            is_approved = false;
+            break;
+          }
+        }
+      } else {
+        is_approved = spec_approved.indexOf(name) >= 0;
+      }
+      if (is_approved && approved) {
+        return getExtension.call(this, extname);
+      } else if (!is_approved && draft) {
+        return getExtension.call(this, extname);
       } else {
         return null;
       }

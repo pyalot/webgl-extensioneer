@@ -9,7 +9,7 @@ The purpose of this library is to make it easier to work with WebGL extensions. 
 Usage
 -----
 
-Include the library in your page. Note that you should frequently update the library if you want to keep on top of the changing extension registry.
+Include the library in your page.
 
 ```html
 <script src="webgl-extensioneer.js"></script>
@@ -39,7 +39,7 @@ Specification defaults to
 
 * draft: false
 * approved: true
-* ratified: true
+* ref: 'browser' or 'spec', defaults to 'browser', if you set it to 'spec' you will need to regularly update your copy of the library.
 
 The test performed is to only return extensions if they match the specification (i.e. setting approved to false will not return approved extensions)
 
