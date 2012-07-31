@@ -9,7 +9,7 @@ The purpose of this library is to make it easier to work with WebGL extensions. 
 Usage
 -----
 
-Include the library in your page
+Include the library in your page. Note that you should frequently update the library if you want to keep on top of the changing extension registry.
 
 ```html
 <script src="webgl-extensioneer.js"></script>
