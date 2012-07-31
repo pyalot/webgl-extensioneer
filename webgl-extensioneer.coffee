@@ -5,7 +5,7 @@ WebGL Extensioneer is licensed under any of the following licenses at your choos
 
 MIT: see mit-license
 GPL: see gpl-license
-BDS: see bsd-license
+BSD: see bsd-license
 '''
 
 registry =
